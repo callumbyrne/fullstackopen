@@ -19,6 +19,12 @@ const StatisticLine = (props) => (
 )
 
 const Statistics = ({ states, math }) => {
+  if (math.total === 0) {
+    return (
+      <div>No feedback given</div>
+    )
+  }
+
   return (
     <div>
       <StatisticLine text="good" value={states.good} />
