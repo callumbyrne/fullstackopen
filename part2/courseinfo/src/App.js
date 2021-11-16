@@ -1,15 +1,16 @@
 import React from 'react';
 
-const Header = ({ course }) => {
+const Header = ({ name }) => {
   return (
-    <h1>{course.name}</h1>
+    <h1>{name}</h1>
   )
 }
 
-const Total = ({ course }) => {
-  const sum = course.parts[0].exercises + course.parts[1].exercises + course.parts[2].exercises
+const Total = ({ parts }) => {
+  const arr = parts.map(part => part.exercises)
+  const total = arr.reduce((sum, cur) => sum + cur, 0)
   return (
-    <p>Number of exercises {sum}</p>
+    <b>total of {total} exercises</b>
   )
 }
 
@@ -21,10 +22,10 @@ const Part = ({ part }) => {
   )
 }
 
-const Content = ({ course }) => {
+const Content = ({ parts }) => {
   return (
     <div>
-      {course.parts.map(part => <Part key={part.id} part={part} />)}
+      {parts.map(part => <Part key={part.id} part={part} />)}
     </div>
   )
 }
@@ -32,8 +33,9 @@ const Content = ({ course }) => {
 const Course = ({ course }) => {
   return (
     <div>
-      <Header course={course} />
-      <Content course={course} />
+      <Header name={course.name} />
+      <Content parts={course.parts} />
+      <Total parts={course.parts} />
     </div>
   )
 }
