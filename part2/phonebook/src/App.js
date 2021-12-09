@@ -12,6 +12,12 @@ const App = () => {
 
   const addPerson = (e) => {
     e.preventDefault()
+    for (let i = 0; i < persons.length; i++) {
+      if (persons[i].name === newName) {
+        alert(`${newName} is already added to phonebook`)
+        return
+      }
+    }
     const personObject = {
       name: newName
     }
