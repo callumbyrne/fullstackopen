@@ -6,6 +6,10 @@ const Filter = ({ value, handler }) => (
   <p>find countries <input value={value} onChange={handler} /></p>
 )
 
+const Button = ({ country, setNewFilter }) => (
+  <button onClick={() => setNewFilter(country.name.common.toLowerCase())}>show</button>
+)
+
 const Country = ({ country }) => {
   console.log(country)
   return (
@@ -15,20 +19,20 @@ const Country = ({ country }) => {
       <p>population {country.population}</p>
       <h3>languages</h3>
       <div>
-        {Object.values(country.languages).map(language => <ul>{language}</ul>)}
+        {Object.values(country.languages).map(language => <ul key={language}>{language}</ul>)}
       </div>
       <img src={country.flags.png} alt='flag' />
     </div>
   )
 }
 
-const Countries = ({ filteredCountries }) => {
+const Countries = ({ filteredCountries, setNewFilter }) => {
   if (filteredCountries.length > 10) {
     return <p>Too many mathces, specify another filter</p>
   } else if (filteredCountries.length > 1) {
     return (
       <div>
-        {filteredCountries.map(country => <p>{country.name.common}</p>)}
+        {filteredCountries.map(country => <p key={country.name.common} >{country.name.common} <Button country={country} setNewFilter={setNewFilter} /></p>)}
       </div>
     )
   } else if (filteredCountries.length === 1) {
@@ -54,6 +58,11 @@ const App = () => {
       })
   }, [])
 
+  useEffect(() => {
+    console.log('hi')
+    console.log(filteredCountries)
+  })
+
   // eventHandlers
   const handleFilterChange = (e) => {
     setNewFilter(e.target.value.toLowerCase())
@@ -64,7 +73,7 @@ const App = () => {
   return (
     <div>
       <Filter value={newFilter} handler={handleFilterChange} />
-      <Countries filteredCountries={filteredCountries} />
+      <Countries filteredCountries={filteredCountries} setNewFilter={setNewFilter} />
     </div>
   )
 }
