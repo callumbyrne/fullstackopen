@@ -10,8 +10,39 @@ const Button = ({ country, setNewFilter }) => (
   <button onClick={() => setNewFilter(country.name.common.toLowerCase())}>show</button>
 )
 
+const Weather = ({ capital }) => {
+  const [weather, setWeather] = useState('')
+
+  useEffect(() => {
+    console.log('weather effect')
+    axios
+      .get(`https://api.openweathermap.org/data/2.5/weather?q=${capital}&units=metric&appid=${process.env.REACT_APP_API_KEY}`)
+      .then(response => {
+        console.log('weather promise fulfilled')
+        setWeather(response.data)
+      })
+  }, [capital])
+  console.log(weather)
+
+  if (weather) {
+    return (
+      <div>
+        <h3>Weather in {capital}</h3>
+        <p><b>temperature:</b> {weather.main.temp} Celcius</p>
+        <img src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`} alt='weather icon' />
+        <p><b>wind:</b> {weather.wind.speed} km/h at {weather.wind.deg} degrees</p>
+      </div>
+    )
+  } else {
+    return (
+      <div>
+        Loading weather...
+      </div>
+    )
+  }
+}
+
 const Country = ({ country }) => {
-  console.log(country)
   return (
     <div>
       <h2>{country.name.common}</h2>
@@ -22,6 +53,7 @@ const Country = ({ country }) => {
         {Object.values(country.languages).map(language => <ul key={language}>{language}</ul>)}
       </div>
       <img src={country.flags.png} alt='flag' />
+      <Weather capital={country.capital[0]} />
     </div>
   )
 }
@@ -57,11 +89,6 @@ const App = () => {
         setCountries(response.data)
       })
   }, [])
-
-  useEffect(() => {
-    console.log('hi')
-    console.log(filteredCountries)
-  })
 
   // eventHandlers
   const handleFilterChange = (e) => {
