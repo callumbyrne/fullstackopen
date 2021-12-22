@@ -1,36 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
+import Filter from './components/Filter'
+import PersonForm from './components/PersonForm'
+import Persons from './components/Persons'
 
-// COMPONENTS
-const Person = ({ person }) => (
-  <p>{person.name} {person.number}</p>
-)
-
-const Filter = ({ newFilter, handleFilterChange }) => (
-  <p>filter shown with <input value={newFilter} onChange={handleFilterChange} /></p>
-)
-
-const PersonForm = ({ addPerson, states, handlers }) => (
-  <form onSubmit={addPerson}>
-    <div>name: <input
-      value={states.newName}
-      onChange={handlers.handleNameChange} />
-    </div>
-    <div>number: <input
-      value={states.newNumber}
-      onChange={handlers.handleNumberChange} />
-    </div>
-    <div>
-      <button type="submit">add</button>
-    </div>
-  </form>
-)
-
-const Persons = ({ peopleToShow }) => (
-  <div>
-    {peopleToShow.map(person => <Person key={person.name} person={person} />)}
-  </div>
-)
 
 const App = () => {
   // useStates
@@ -64,8 +37,12 @@ const App = () => {
       number: newNumber
     }
 
-    setPersons(persons.concat(personObject))
-    setNewName('')
+    axios
+      .post('http://localhost:3001/persons', personObject)
+      .then(response => {
+        setPersons(persons.concat(response.data))
+        setNewName('')
+      })
   }
 
   // Functions to handle onChange
