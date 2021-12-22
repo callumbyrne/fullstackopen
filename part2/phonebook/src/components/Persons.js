@@ -1,12 +1,16 @@
 import React from "react";
 
-const Person = ({ person }) => (
-    <p>{person.name} {person.number}</p>
+const DeleteButton = ({ person, deletePerson }) => (
+    <button onClick={() => deletePerson(person.id, person.name)}> delete</button >
 )
 
-const Persons = ({ peopleToShow }) => (
+const Person = ({ person, deletePerson }) => (
+    <p>{person.name} {person.number} <DeleteButton person={person} deletePerson={deletePerson} /></p>
+)
+
+const Persons = ({ peopleToShow, deletePerson }) => (
     <div>
-        {peopleToShow.map(person => <Person key={person.name} person={person} />)}
+        {peopleToShow.map(person => <Person key={person.name} person={person} deletePerson={deletePerson} />)}
     </div>
 )
 

@@ -39,8 +39,17 @@ const App = () => {
       .then(returnedPerson => {
         setPersons(persons.concat(returnedPerson))
         setNewName('')
+        setNewNumber('')
       })
   }
+
+  const deletePerson = (id, name) => {
+    if (window.confirm(`Delete ${name}`)) {
+      personService.deleteItem(id)
+      setPersons(persons.filter(person => person.id !== id))
+    }
+  }
+
 
   // Functions to handle onChange
   const handleNameChange = (e) => {
@@ -55,6 +64,7 @@ const App = () => {
     setNewFilter(e.target.value)
   }
 
+
   // Filters persons array based on filter useState
   const peopleToShow = persons.filter(person => person.name.toLowerCase().includes(newFilter))
 
@@ -65,7 +75,7 @@ const App = () => {
       <h2>add a new</h2>
       <PersonForm addPerson={addPerson} states={{ newName, newNumber }} handlers={{ handleNameChange, handleNumberChange }} />
       <h2>Numbers</h2>
-      <Persons peopleToShow={peopleToShow} />
+      <Persons peopleToShow={peopleToShow} deletePerson={deletePerson} />
     </div>
   )
 }
