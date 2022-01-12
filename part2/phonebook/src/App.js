@@ -21,6 +21,7 @@ const App = () => {
       .getAll()
       .then(initialPersons => {
         setPersons(initialPersons)
+        console.log('initialPersons', initialPersons)
       })
   }, [])
 
@@ -115,7 +116,7 @@ const App = () => {
 
 
   // Filters persons array based on filter useState
-  const peopleToShow = persons.filter(person => person.name.toLowerCase().includes(newFilter))
+  const peopleToShow = persons.filter(person => person.name.toLowerCase().includes(newFilter.toLowerCase()))
 
   return (
     <div>
