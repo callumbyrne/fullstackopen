@@ -69,6 +69,27 @@ test('a valid blog can be added', async () => {
     expect(titles).toContain('Canonical string reduction')
 })
 
+test('if likes property is missing it will default to the value 0', async () => {
+    const newBlog = {
+        _id: "5a422b891b54a676234d17fa",
+        title: "First class tests",
+        author: "Robert C. Martin",
+        url: "http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll",
+        __v: 0
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(200)
+        .expect('Content-type', /application\/json/)
+
+    const blogsAtEnd = await api.get('/api/blogs')
+    const requiredBlog = blogsAtEnd.body.find(b => b.title === 'First class tests')
+
+    expect(requiredBlog.likes).toEqual(0)
+})
+
 afterAll(() => {
     mongoose.connection.close()
 })
