@@ -90,6 +90,30 @@ test('if title and url properties missing, respond with 400 Bad Request', async 
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
 })
 
+test('viewing a note with a valid id', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToView = blogsAtStart[0]
+
+    const resultBlog = await api
+        .get(`/api/blogs/${blogToView.id}`)
+        .expect(200)
+        .expect('Content-type', /application\/json/)
+
+    expect(resultBlog.body).toEqual(blogToView)
+})
+
+test('deleting a note', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart[0]
+
+    await api
+        .delete(`/api/blogs/${blogToDelete.id}`)
+        .expect(204)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
+})
+
 afterAll(() => {
     mongoose.connection.close()
 })

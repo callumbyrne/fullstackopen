@@ -1,50 +1,41 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 
+// using express-async-error npm package which is required on the app.js file
+// eliminates the need for try-catch blocks
+
 // get all
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({})
-
-  response.json(blogs)
+  response.json(blogs.map(blog => blog.toJSON()))
 })
 
 // get one
-blogsRouter.get('/:id', (request, response) => {
-  Blog.findById(request.params.id)
-    .then(blog => {
-      if (blog) {
-        response.json(note.toJSON())
-      } else {
-        response.status(404).end()
-      }
-    })
-    .catch(error => next(error))
+blogsRouter.get('/:id', async (request, response) => {
+  const blog = await Blog.findById(request.params.id)
+  if (blog) {
+    response.json(blog)
+  } else {
+    response.status(404).end()
+  }
 })
 
 // create
 blogsRouter.post('/', async (request, response, next) => {
   const blog = new Blog(request.body)
 
-  try {
-    const savedBlog = await blog.save()
-    response.json(savedBlog)
-  } catch (exception) {
-    next(exception)
-  }
-
+  const savedBlog = await blog.save()
+  response.json(savedBlog.toJSON())
 })
 
 // delete
-blogsRouter.delete('/:id', (request, response) => {
-  Blog.findByIdAndRemove(request.params.id)
-    .then(() => {
-      response.status(204).end()
-    })
-    .catch(error => next(error))
+blogsRouter.delete('/:id', async (request, response) => {
+  await Blog.findByIdAndRemove(request.params.id)
+  response.status(204).end()
 })
 
 // update
-blogsRouter.put('/:id', (request, response) => {
+blogsRouter.put('/:id', async (request, response) => {
   const body = request.body
 
   const blog = {
@@ -54,11 +45,8 @@ blogsRouter.put('/:id', (request, response) => {
     likes: body.likes
   }
 
-  Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
-    .then(updatedBlog => {
-      response.json(updatedBlog.toJSON())
-    })
-    .catch(error => next(error))
+  await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
+  response.json(updatedBlog.toJSON())
 })
 
 module.exports = blogsRouter
