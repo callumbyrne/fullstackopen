@@ -11,10 +11,10 @@ logger.info('connecting to', config.MONGODB_URI)
 
 mongoose.connect(config.MONGODB_URI)
   .then(() => {
-    console.log('connected to MongoDB')
+    logger.info('connected to MongoDB')
   })
   .catch((error) => {
-    console.log('error connecting to MonogoDb', error.message)
+    logger.error('error connecting to MonogoDb', error.message)
   })
 
 app.use(cors())
