@@ -1,9 +1,10 @@
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNieXJuZSIsImlkIjoiNjFlZjk4NzJiNmNkZjc0ZmRiZTk5ZjQ5IiwiaWF0IjoxNjQzMTQ3MjI4fQ.5DNz963uLnjBwSo0TZbbMlD4-t0oYTgHvTTaVxEbSPY
 
 {
-  "title": "haha",
-  "author": "Jared",
+  "title": "blue",
+  "author": "Juicer",
   "url": "url",
-  "likes": "1"
+  "likes": "100"
 }
