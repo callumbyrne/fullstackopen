@@ -6,14 +6,6 @@ const jwt = require('jsonwebtoken')
 // using express-async-error npm package which is required on the app.js file
 // eliminates the need for try-catch blocks
 
-const getTokenFrom = request => {
-  const authorization = request.get('authorization')
-  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-    return authorization.substring(7)
-  }
-  return null
-}
-
 // get all
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
@@ -33,8 +25,8 @@ blogsRouter.get('/:id', async (request, response) => {
 // create
 blogsRouter.post('/', async (request, response) => {
   const body = request.body
-  const token = getTokenFrom(request)
-  const decodededToken = jwt.verify(token, process.env.SECRET)
+
+  const decodededToken = jwt.verify(request.token, process.env.SECRET)
   if (!decodededToken.id) {
     return response.status(401).json({ error: 'token missing or invalid' })
   }
