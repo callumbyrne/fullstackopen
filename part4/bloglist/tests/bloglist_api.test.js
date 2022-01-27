@@ -5,13 +5,27 @@ const app = require('../app')
 const api = supertest(app)
 
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 beforeEach(async () => {
     await Blog.deleteMany({})
+    await User.deleteMany({})
+
+    // has to be done this way and not new User then user.save() because passwordHash needs to be created through post route
+    await api
+        .post('/api/users')
+        .send(helper.initialUser)
 
     const blogObjects = helper.initialBlogs.map(blog => new Blog(blog))
     const promiseArray = blogObjects.map(blog => blog.save())
     await Promise.all(promiseArray)
+})
+
+test('login return a token', async () => {
+    await api
+        .post('/api/login')
+        .send(helper.initialUser)
+        .expect(200)
 })
 
 test('returns correct amount of blog post', async () => {
@@ -28,17 +42,20 @@ test('unique identifier property of the blog posts is named id', async () => {
 
 test('a valid blog can be added', async () => {
     const newBlog = {
-        _id: "5a422b3a1b54a676234d17f9",
         title: "Canonical string reduction",
         author: "Edsger W. Dijkstra",
         url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
         likes: 12,
-        __v: 0
     }
+
+    const user = await api
+        .post('/api/login')
+        .send(helper.initialUser)
 
     await api
         .post('/api/blogs')
         .send(newBlog)
+        .set('Authorization', `bearer ${user.body.token}`)
         .expect(200)
         .expect('Content-type', /application\/json/)
 
@@ -60,9 +77,14 @@ test('if likes property is missing it will default to the value 0', async () => 
         __v: 0
     }
 
+    const user = await api
+        .post('/api/login')
+        .send(helper.initialUser)
+
     await api
         .post('/api/blogs')
         .send(newBlog)
+        .set('Authorization', `bearer ${user.body.token}`)
         .expect(200)
         .expect('Content-type', /application\/json/)
 
@@ -80,9 +102,14 @@ test('if title and url properties missing, respond with 400 Bad Request', async 
         __v: 0
     }
 
+    const user = await api
+        .post('/api/login')
+        .send(helper.initialUser)
+
     await api
         .post('/api/blogs')
         .send(newBlog)
+        .set('Authorization', `bearer ${user.body.token}`)
         .expect(400)
         .expect('Content-type', /application\/json/)
 
@@ -90,7 +117,7 @@ test('if title and url properties missing, respond with 400 Bad Request', async 
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
 })
 
-test('viewing a note with a valid id', async () => {
+test('viewing a blog with a valid id', async () => {
     const blogsAtStart = await helper.blogsInDb()
     const blogToView = blogsAtStart[0]
 
@@ -102,16 +129,38 @@ test('viewing a note with a valid id', async () => {
     expect(resultBlog.body).toEqual(blogToView)
 })
 
-test('deleting a note', async () => {
+test('deleting a blog', async () => {
     const blogsAtStart = await helper.blogsInDb()
-    const blogToDelete = blogsAtStart[0]
+
+    const newBlog = {
+        title: "Canonical string reduction",
+        author: "Edsger W. Dijkstra",
+        url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+        likes: 12,
+    }
+
+    const user = await api
+        .post('/api/login')
+        .send(helper.initialUser)
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .set('Authorization', `bearer ${user.body.token}`)
+        .expect(200)
+
+    const allBlogs = await helper.blogsInDb()
+    expect(allBlogs).toHaveLength(blogsAtStart.length + 1)
+
+    const blogToDelete = allBlogs.find(blog => blog.title === newBlog.title)
 
     await api
         .delete(`/api/blogs/${blogToDelete.id}`)
+        .set('Authorization', `bearer ${user.body.token}`)
         .expect(204)
 
     const blogsAtEnd = await helper.blogsInDb()
-    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
+    expect(blogsAtEnd).toHaveLength(blogsAtStart.length)
 })
 
 afterAll(() => {
