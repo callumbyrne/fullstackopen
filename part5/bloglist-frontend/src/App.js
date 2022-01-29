@@ -3,6 +3,7 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
+import Button from './components/Button'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -17,6 +18,14 @@ const App = () => {
     )
   }, [])
 
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+    }
+  }, [])
+
   const handleLogin = async (event) => {
     event.preventDefault()
 
@@ -24,6 +33,11 @@ const App = () => {
       const user = await loginService.login({
         username, password
       })
+
+      window.localStorage.setItem(
+        'loggedUser', JSON.stringify(user)
+      )
+
       setUser(user)
       setUsername('')
       setPassword('')
@@ -33,6 +47,11 @@ const App = () => {
         setErrorMessage(null)
       }, 5000)
     }
+  }
+
+  const handleLogout = () => {
+    window.localStorage.removeItem('loggedUser')
+    setUser(null)
   }
 
   const loginForm = () => (
@@ -63,7 +82,7 @@ const App = () => {
   const blogList = () => (
     <div>
       <h2>blogs</h2>
-      <p>{user.name} logged in</p>
+      <p>{user.name} logged in <Button action={handleLogout} text="logout" /></p>
       {blogs.map(blog => <Blog key={blog.id} blog={blog} />)}
     </div>
   )
