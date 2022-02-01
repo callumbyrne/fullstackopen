@@ -4,13 +4,21 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
 import Button from './components/Button'
+import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
+  const [errorMessage, setErrorMessage] = useState(null)
+
+  const [newTitle, setNewTitle] = useState('')
+  const [newAuthor, setNewAuthor] = useState('')
+  const [newUrl, setNewUrl] = useState('')
+
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+
   const [user, setUser] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(null)
+
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -23,6 +31,7 @@ const App = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
+      blogService.setToken(user.token)
     }
   }, [])
 
@@ -38,6 +47,7 @@ const App = () => {
         'loggedUser', JSON.stringify(user)
       )
 
+      blogService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
@@ -81,19 +91,55 @@ const App = () => {
 
   const blogList = () => (
     <div>
-      <h2>blogs</h2>
-      <p>{user.name} logged in <Button action={handleLogout} text="logout" /></p>
       {blogs.map(blog => <Blog key={blog.id} blog={blog} />)}
     </div>
   )
 
+  const addBlog = (event) => {
+    event.preventDefault()
+
+    const blogObject = {
+      title: newTitle,
+      author: newAuthor,
+      url: newUrl
+    }
+
+    blogService
+      .create(blogObject)
+      .then(returnedBlog => {
+        setBlogs(blogs.concat(returnedBlog))
+        setNewTitle('')
+        setNewAuthor('')
+        setNewUrl('')
+      })
+  }
+
+  // handlers
+  const handleTitleChange = (e) => {
+    setNewTitle(e.target.value)
+  }
+
+  const handleAuthorChange = (e) => {
+    setNewAuthor(e.target.value)
+  }
+
+  const handleUrlChange = (e) => {
+    setNewUrl(e.target.value)
+  }
+
   return (
     <div>
       <Notification message={errorMessage} />
+      <h2>Blogs</h2>
 
       {user === null ?
         loginForm() :
-        blogList()
+        <div>
+          <p>{user.name} logged in <Button action={handleLogout} text="logout" /></p>
+          <h2>Create new</h2>
+          <BlogForm addBlog={addBlog} states={{ newTitle, newAuthor, newUrl }} handlers={{ handleTitleChange, handleAuthorChange, handleUrlChange }} />
+          {blogList()}
+        </div>
       }
 
     </div>
