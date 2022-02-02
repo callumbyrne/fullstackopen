@@ -1,14 +1,22 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
-const Blog = ({ blog, createUpdate }) => {
+const Blog = ({ blog, createUpdate, user, handleDelete }) => {
   const [visible, setVisible] = useState(false)
+  const [OP, setOP] = useState(false)
 
   const hideWhenVisible = { display: visible ? 'none' : '' }
   const showWhenVisible = { display: visible ? '' : 'none' }
+  const showWhenOP = { display: OP ? '' : 'none' }
 
   const toggleVisibility = () => {
     setVisible(!visible)
   }
+
+  useEffect(() => {
+    if (user.username === blog.user.username) {
+      setOP(true)
+    }
+  }, [user, blog])
 
   const blogStyle = {
     paddingTop: 10,
@@ -18,9 +26,7 @@ const Blog = ({ blog, createUpdate }) => {
     marginBottom: 5
   }
 
-  const updateBlog = (e) => {
-    e.preventDefault()
-
+  const updateBlog = () => {
     const blogObject = {
       user: blog.user.id,
       likes: blog.likes + 1,
@@ -30,6 +36,10 @@ const Blog = ({ blog, createUpdate }) => {
     }
 
     createUpdate(blog.id, blogObject)
+  }
+
+  const deleteBlog = () => {
+    handleDelete(blog.id, blog)
   }
 
   return (
@@ -44,6 +54,7 @@ const Blog = ({ blog, createUpdate }) => {
         <div>{blog.url}</div>
         <div>likes {blog.likes} <button onClick={updateBlog}>like</button></div>
         <div>{blog.user.name}</div>
+        <button style={showWhenOP} onClick={deleteBlog}>remove</button>
       </div>
     </div>
   )

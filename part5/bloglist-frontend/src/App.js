@@ -92,7 +92,7 @@ const App = () => {
 
     return (
       <div>
-        {orderedBlogs.map(blog => <Blog key={blog.id} blog={blog} createUpdate={updateBlog} />)}
+        {orderedBlogs.map(blog => <Blog key={blog.id} blog={blog} createUpdate={updateBlog} user={user} handleDelete={handleDelete} />)}
       </div>
     )
   }
@@ -116,6 +116,13 @@ const App = () => {
       .then(returnedBlog => {
         setBlogs(blogs.map(blog => blog.id !== returnedBlog.id ? blog : returnedBlog))
       })
+  }
+
+  const handleDelete = (id, blog) => {
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
+      blogService.deleteItem(id)
+      setBlogs(blogs.filter(blog => blog.id !== id))
+    }
   }
 
   const blogFormRef = useRef()
