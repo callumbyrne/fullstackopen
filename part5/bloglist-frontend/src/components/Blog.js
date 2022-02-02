@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, createUpdate }) => {
   const [visible, setVisible] = useState(false)
 
   const hideWhenVisible = { display: visible ? 'none' : '' }
@@ -18,6 +18,20 @@ const Blog = ({ blog }) => {
     marginBottom: 5
   }
 
+  const updateBlog = (e) => {
+    e.preventDefault()
+
+    const blogObject = {
+      user: blog.user.id,
+      likes: blog.likes + 1,
+      author: blog.author,
+      title: blog.title,
+      url: blog.url
+    }
+
+    createUpdate(blog.id, blogObject)
+  }
+
   return (
     <div style={blogStyle}>
       <div style={hideWhenVisible}>
@@ -28,7 +42,7 @@ const Blog = ({ blog }) => {
         {blog.title} {blog.author}
         <button onClick={toggleVisibility}>hide</button>
         <div>{blog.url}</div>
-        <div>likes {blog.likes} <button>like</button></div>
+        <div>likes {blog.likes} <button onClick={updateBlog}>like</button></div>
         <div>{blog.user.name}</div>
       </div>
     </div>

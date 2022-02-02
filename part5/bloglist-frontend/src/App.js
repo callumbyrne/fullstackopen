@@ -87,11 +87,15 @@ const App = () => {
     </form>
   )
 
-  const blogList = () => (
-    <div>
-      {blogs.map(blog => <Blog key={blog.id} blog={blog} />)}
-    </div>
-  )
+  const blogList = () => {
+    const orderedBlogs = blogs.sort((a, b) => b.likes - a.likes)
+
+    return (
+      <div>
+        {orderedBlogs.map(blog => <Blog key={blog.id} blog={blog} createUpdate={updateBlog} />)}
+      </div>
+    )
+  }
 
   const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility()
@@ -103,6 +107,14 @@ const App = () => {
         setTimeout(() => {
           setSuccessMessage(null)
         }, 5000)
+      })
+  }
+
+  const updateBlog = (id, blogObject) => {
+    blogService
+      .update(id, blogObject)
+      .then(returnedBlog => {
+        setBlogs(blogs.map(blog => blog.id !== returnedBlog.id ? blog : returnedBlog))
       })
   }
 
