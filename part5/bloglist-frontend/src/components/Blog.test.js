@@ -1,6 +1,6 @@
 import React from 'react'
 import '@testing-library/jest-dom/extend-expect'
-import { render } from '@testing-library/react'
+import { fireEvent, render } from '@testing-library/react'
 import Blog from './Blog'
 
 const blog = {
@@ -22,14 +22,40 @@ const user = {
   username: 'cbyrne'
 }
 
-test('by default blog renders title and author, but not url and likes', () => {
-  const component = render(
-    <Blog blog={blog} user={user} />
-  )
+const updateBlog = jest.fn()
 
-  expect(component.container).toHaveTextContent('one')
-  expect(component.container).toHaveTextContent('two')
+describe('<Blog />', () => {
+  let component
 
-  const div = component.container.querySelector('.togglableContent')
-  expect(div).toHaveStyle('display: none')
+  beforeEach(() => {
+    component = render(
+      <Blog blog={blog} user={user} createUpdate={updateBlog} />
+    )
+  })
+
+  test('by default blog renders title and author, but not url and likes', () => {
+    expect(component.container).toHaveTextContent('one')
+    expect(component.container).toHaveTextContent('two')
+
+    const div = component.container.querySelector('.togglableContent')
+    expect(div).toHaveStyle('display: none')
+  })
+
+  test('url and likes are shown when view button is clicked', () => {
+    const button = component.getByText('view')
+    fireEvent.click(button)
+
+    const div = component.container.querySelector('.togglableContent')
+    expect(div).not.toHaveStyle('display: none')
+  })
+
+  test('when like button is clicked twice, even handler the component recieves is called twice', () => {
+    const likeButton = component.container.querySelector('.likeButton')
+    fireEvent.click(likeButton)
+    fireEvent.click(likeButton)
+
+    expect(updateBlog.mock.calls).toHaveLength(2)
+  })
 })
+
+
