@@ -1,4 +1,5 @@
 const blogsRouter = require('express').Router()
+const { findById } = require('../models/blog')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
@@ -44,7 +45,9 @@ blogsRouter.post('/', async (request, response) => {
   foundUser.blogs = foundUser.blogs.concat(savedBlog._id)
   await foundUser.save()
 
-  response.json(savedBlog)
+  const populatedBlog = await Blog.findById(savedBlog._id).populate('user')
+
+  response.json(populatedBlog)
 })
 
 // delete

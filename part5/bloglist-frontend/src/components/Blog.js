@@ -52,7 +52,7 @@ const Blog = ({ blog, createUpdate, user, handleDelete }) => {
         {blog.title} {blog.author}
         <button onClick={toggleVisibility}>hide</button>
         <div>{blog.url}</div>
-        <div>likes {blog.likes} <button onClick={updateBlog} className='likeButton'>like</button></div>
+        <div>likes <span className='likes'>{blog.likes}</span><button onClick={updateBlog} className='likeButton'>like</button></div>
         <div>{blog.user.name}</div>
         <button style={showWhenOP} onClick={deleteBlog}>remove</button>
       </div>

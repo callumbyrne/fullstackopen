@@ -46,5 +46,45 @@ describe('Blog app', function () {
 
       cy.contains('test')
     })
+
+    it('A blog can be liked', function () {
+      cy.contains('new blog').click()
+      cy.get('#title').type('test')
+      cy.get('#author').type('tester')
+      cy.get('#url').type('test.com')
+      cy.contains('create').click()
+
+      cy.contains('view').click()
+      cy.get('.likeButton').click()
+
+      cy.contains('likes 1')
+    })
+
+    it('User who created a blog can delete it', function () {
+      cy.contains('new blog').click()
+      cy.get('#title').type('test')
+      cy.get('#author').type('tester')
+      cy.get('#url').type('test.com')
+      cy.contains('create').click()
+
+      cy.contains('view').click()
+      cy.contains('remove').click()
+    })
+  })
+
+  describe('Check order of blogs', function () {
+    beforeEach(function () {
+      cy.login({ username: 'cbyrne', password: 'archie' })
+    })
+
+    it('Created blogs are ordered correctly', function () {
+      cy.createBlog({ title: 'one', author: 'one', url: 'one', likes: 1 })
+      cy.createBlog({ title: 'ten', author: 'ten', url: 'ten', likes: 10 })
+      cy.createBlog({ title: 'twenty', author: 'twenty', url: 'twenty', likes: 20 })
+
+      cy.get('.likes').then(likes => {
+        expect(likes[0]).to.contain(20)
+      })
+    })
   })
 })
