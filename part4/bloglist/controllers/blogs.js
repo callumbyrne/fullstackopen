@@ -1,7 +1,6 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
-const jwt = require('jsonwebtoken')
 
 // using express-async-error npm package which is required on the app.js file
 // eliminates the need for try-catch blocks
@@ -72,10 +71,11 @@ blogsRouter.put('/:id', async (request, response) => {
     title: body.content,
     author: body.author,
     url: body.url,
-    likes: body.likes
+    likes: body.likes,
+    user: body.user
   }
 
-  await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
+  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true }).populate('user', { username: 1, name: 1 })
   response.json(updatedBlog.toJSON())
 })
 
