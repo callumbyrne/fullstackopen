@@ -27,11 +27,8 @@ const Anecdotes = () => {
 
   const vote = (anecdote) => {
     console.log('vote', anecdote.id)
-    dispatch(voteAnecdote(anecdote.id))
-    dispatch(setNotification(`you voted '${anecdote.content}'`))
-    setTimeout(() => {
-      dispatch(setNotification(null))
-    }, 5000)
+    dispatch(voteAnecdote(anecdote))
+    dispatch(setNotification(`you voted '${anecdote.content}'`, 3))
   }
 
   return (
