@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import {
-  BrowserRouter as Router,
-  Routes, Route, Link
+  Routes, Route, Link, useMatch
 } from 'react-router-dom'
 
 import About from './components/About'
 import CreateNew from './components/CreateNew'
 import AnecdoteList from './components/AnecdoteList'
 import Footer from './components/Footer'
+import Anecdote from './components/Anecdote'
 
 const App = () => {
   const [anecdotes, setAnecdotes] = useState([
@@ -52,8 +52,13 @@ const App = () => {
     paddingRight: 5
   }
 
+  const match = useMatch('/anecdotes/:id')
+  const anecdote = match
+    ? anecdotes.find(anecdote => anecdote.id === match.params.id)
+    : null
+
   return (
-    <Router>
+    <div>
       <div>
         <Link style={padding} to="/">home</Link>
         <Link style={padding} to="/create">create new</Link>
@@ -61,13 +66,14 @@ const App = () => {
       </div>
 
       <Routes>
+        <Route path="/anecdotes/:id" element={<Anecdote anecdote={anecdote} />} />
         <Route path="/create" element={<CreateNew />} />
         <Route path="/about" element={<About />} />
         <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
       </Routes>
 
       <Footer />
-    </Router>
+    </div>
   )
 }
 
