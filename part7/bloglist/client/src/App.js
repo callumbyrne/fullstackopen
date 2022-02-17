@@ -6,16 +6,18 @@ import Notification from './components/Notification'
 import Button from './components/Button'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
+import { setNotification } from './reducers/notificationReducer'
+import { useDispatch } from 'react-redux'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [errorMessage, setErrorMessage] = useState(null)
-  const [successMessage, setSuccessMessage] = useState(null)
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
   const [user, setUser] = useState(null)
+
+  const dispatch = useDispatch()
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
@@ -29,6 +31,16 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
+
+  // const notifyWith = (message, type = 'success') => {
+  //   setNotification({
+  //     message,
+  //     type,
+  //   })
+  //   setTimeout(() => {
+  //     setNotification(null)
+  //   }, 5000)
+  // }
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -45,11 +57,9 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
+      dispatch(setNotification(`${user.name} welcome back!`, 5))
     } catch (exception) {
-      setErrorMessage('Wrong credentials')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      dispatch(setNotification('Wrong credentials', 5, 'error'))
     }
   }
 
@@ -109,12 +119,12 @@ const App = () => {
     blogFormRef.current.toggleVisibility()
     blogService.create(blogObject).then((returnedBlog) => {
       setBlogs(blogs.concat(returnedBlog))
-      setSuccessMessage(
-        `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`,
+      dispatch(
+        setNotification(
+          `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`,
+          5,
+        ),
       )
-      setTimeout(() => {
-        setSuccessMessage(null)
-      }, 5000)
     })
   }
 
@@ -139,7 +149,7 @@ const App = () => {
 
   return (
     <div>
-      <Notification message={{ errorMessage, successMessage }} />
+      <Notification />
       <h2>Blogs</h2>
 
       {user === null ? (
