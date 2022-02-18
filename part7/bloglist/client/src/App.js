@@ -39,24 +39,30 @@ const App = () => {
 
   const blogFormRef = useRef()
 
+  if (!user) {
+    return (
+      <div>
+        <h2>Blogs</h2>
+        <Notification />
+        <LoginForm />
+      </div>
+    )
+  }
+
   return (
     <div>
-      <Notification />
       <h2>Blogs</h2>
+      <Notification />
 
-      {user === null ? (
-        <LoginForm />
-      ) : (
-        <div>
-          <p>
-            {user.name} logged in <Button action={handleLogout} text="logout" />
-          </p>
-          <Togglable buttonLabel="new blog" ref={blogFormRef}>
-            <BlogForm createBlog={addBlog} />
-          </Togglable>
-          <BlogList />
-        </div>
-      )}
+      <p>
+        {user.name} logged in <Button action={handleLogout} text="logout" />
+      </p>
+
+      <Togglable buttonLabel="new blog" ref={blogFormRef}>
+        <BlogForm createBlog={addBlog} />
+      </Togglable>
+
+      <BlogList />
     </div>
   )
 }
