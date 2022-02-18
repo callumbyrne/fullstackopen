@@ -41,9 +41,7 @@ export const updateBlog = (id, blogObject) => {
     const updatedBlog = await blogService.update(id, blogObject)
     dispatch(
       setBlogs(
-        blogs.filter((blog) =>
-          blog.id !== updateBlog.id ? blog : updatedBlog,
-        ),
+        blogs.map((blog) => (blog.id !== updatedBlog.id ? blog : updatedBlog)),
       ),
     )
   }
