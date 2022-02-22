@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { updateBlog, deleteBlog } from '../reducers/blogReducer'
+import { updateBlog, deleteBlog, createComment } from '../reducers/blogReducer'
 import { useNavigate } from 'react-router-dom'
 
 const Blog = ({ blog }) => {
@@ -9,6 +9,8 @@ const Blog = ({ blog }) => {
   }
 
   const [OP, setOP] = useState(false)
+  const [newComment, setNewComment] = useState('')
+
   const user = useSelector((state) => state.user)
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -38,6 +40,16 @@ const Blog = ({ blog }) => {
     dispatch(deleteBlog(blog.id, blog))
   }
 
+  const handleCommentChange = (e) => {
+    setNewComment(e.target.value)
+  }
+
+  const submitComment = (e) => {
+    e.preventDefault()
+    dispatch(createComment(blog.id, newComment))
+    setNewComment('')
+  }
+
   return (
     <div>
       <h2>{`${blog.title} ${blog.author}`}</h2>
@@ -52,6 +64,16 @@ const Blog = ({ blog }) => {
       <button style={showWhenOP} onClick={deleteHandler}>
         remove
       </button>
+      <h3>comments</h3>
+      <form onSubmit={submitComment}>
+        <input value={newComment} onChange={handleCommentChange} />
+        <button type="submit">add comment</button>
+      </form>
+      <ul>
+        {blog.comments.map((comment, index) => (
+          <li key={index}>{comment}</li>
+        ))}
+      </ul>
     </div>
   )
 }

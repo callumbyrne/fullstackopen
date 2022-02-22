@@ -35,6 +35,18 @@ export const createBlog = (blogObject) => {
   }
 }
 
+export const createComment = (id, comment) => {
+  return async (dispatch) => {
+    const blogs = await blogService.getAll()
+    const response = await blogService.comment(id, comment)
+    dispatch(
+      setBlogs(
+        blogs.map((blog) => (blog.id !== response.id ? blog : response)),
+      ),
+    )
+  }
+}
+
 export const updateBlog = (id, blogObject) => {
   return async (dispatch) => {
     const blogs = await blogService.getAll()
