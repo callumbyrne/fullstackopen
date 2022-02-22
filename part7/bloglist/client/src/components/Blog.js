@@ -1,21 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { updateBlog, deleteBlog } from '../reducers/blogReducer'
+import { useNavigate } from 'react-router-dom'
 
 const Blog = ({ blog }) => {
-  const [visible, setVisible] = useState(false)
+  if (!blog) {
+    return null
+  }
+
   const [OP, setOP] = useState(false)
   const user = useSelector((state) => state.user)
-
-  const hideWhenVisible = { display: visible ? 'none' : '' }
-  const showWhenVisible = { display: visible ? '' : 'none' }
-  const showWhenOP = { display: OP ? '' : 'none' }
-
   const dispatch = useDispatch()
-
-  const toggleVisibility = () => {
-    setVisible(!visible)
-  }
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (user.username === blog.user.username) {
@@ -23,15 +19,9 @@ const Blog = ({ blog }) => {
     }
   }, [user, blog])
 
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5,
-  }
+  const showWhenOP = { display: OP ? '' : 'none' }
 
-  const createUpdate = () => {
+  const likeHandler = () => {
     const blogObject = {
       user: blog.user.id,
       likes: blog.likes + 1,
@@ -43,31 +33,25 @@ const Blog = ({ blog }) => {
     dispatch(updateBlog(blog.id, blogObject))
   }
 
-  return (
-    <div style={blogStyle}>
-      <div style={hideWhenVisible} className="defaultContent">
-        {blog.title} {blog.author}
-        <button onClick={toggleVisibility}>view</button>
-      </div>
+  const deleteHandler = () => {
+    navigate('/')
+    dispatch(deleteBlog(blog.id, blog))
+  }
 
-      <div style={showWhenVisible} className="togglableContent">
-        {blog.title} {blog.author}
-        <button onClick={toggleVisibility}>hide</button>
-        <div>{blog.url}</div>
-        <div>
-          likes <span className="likes">{blog.likes}</span>
-          <button onClick={createUpdate} className="likeButton">
-            like
-          </button>
-        </div>
-        <div>{blog.user.name}</div>
-        <button
-          style={showWhenOP}
-          onClick={() => dispatch(deleteBlog(blog.id, blog))}
-        >
-          remove
+  return (
+    <div>
+      <h2>{`${blog.title} ${blog.author}`}</h2>
+      <div>{blog.url}</div>
+      <div>
+        likes <span className="likes">{blog.likes}</span>
+        <button onClick={likeHandler} className="likeButton">
+          like
         </button>
       </div>
+      <div>added by {blog.user.name}</div>
+      <button style={showWhenOP} onClick={deleteHandler}>
+        remove
+      </button>
     </div>
   )
 }

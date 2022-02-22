@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Routes, Route, useMatch } from 'react-router-dom'
+import { Routes, Route, useMatch, Link } from 'react-router-dom'
 import blogService from './services/blogs'
 import Notification from './components/Notification'
 import Button from './components/Button'
@@ -11,11 +11,13 @@ import { initializeBlogs } from './reducers/blogReducer'
 import { initalizeUsers } from './reducers/usersReducer'
 import Users from './components/Users'
 import User from './components/User'
+import Blog from './components/Blog'
 
 const App = () => {
   const dispatch = useDispatch()
   const currentUser = useSelector((state) => state.user)
   const users = useSelector((state) => state.users)
+  const blogs = useSelector((state) => state.blogs)
 
   useEffect(() => {
     dispatch(initializeBlogs())
@@ -44,6 +46,11 @@ const App = () => {
     ? users.find((user) => user.id === userMatch.params.id)
     : null
 
+  const blogMatch = useMatch('/blogs/:id')
+  const blog = blogMatch
+    ? blogs.find((blog) => blog.id === blogMatch.params.id)
+    : null
+
   if (!currentUser) {
     return (
       <div>
@@ -59,12 +66,25 @@ const App = () => {
       <h2>Blogs</h2>
       <Notification />
 
-      <p>{currentUser.name} logged in</p>
-      <Button action={handleLogout} text="logout" />
+      <div style={{ backgroundColor: 'lightgrey' }}>
+        <Link style={{ paddingRight: 5 }} to="/">
+          blogs
+        </Link>
+        <Link style={{ paddingRight: 5 }} to="/users">
+          users
+        </Link>
+        <span style={{ paddingRight: 5 }}>{currentUser.name} logged in</span>
+        <Button
+          style={{ paddingRight: 5 }}
+          action={handleLogout}
+          text="logout"
+        />
+      </div>
 
       <Routes>
         <Route path="/users/:id" element={<User user={user} />} />
         <Route path="/users" element={<Users />} />
+        <Route path="/blogs/:id" element={<Blog blog={blog} />} />
         <Route path="/" element={<BlogList />} />
       </Routes>
     </div>

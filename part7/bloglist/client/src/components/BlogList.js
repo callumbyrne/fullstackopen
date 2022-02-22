@@ -1,9 +1,9 @@
 import React, { useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import Blog from './Blog'
 import Togglable from './Togglable'
 import BlogForm from './BlogForm'
 import { createBlog } from '../reducers/blogReducer'
+import { Link } from 'react-router-dom'
 
 const BlogList = () => {
   // Can't sort the blogs directly as it would be mutating state?
@@ -19,17 +19,25 @@ const BlogList = () => {
 
   const blogFormRef = useRef()
 
+  const blogStyle = {
+    paddingTop: 10,
+    paddingLeft: 2,
+    border: 'solid',
+    borderWidth: 1,
+    marginBottom: 5,
+  }
+
   return (
     <div>
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
         <BlogForm createBlog={addBlog} />
       </Togglable>
 
-      <div>
-        {orderedBlogs.map((blog) => (
-          <Blog key={blog.id} blog={blog} />
-        ))}
-      </div>
+      {orderedBlogs.map((blog) => (
+        <div key={blog.id} style={blogStyle}>
+          <Link to={`/blogs/${blog.id}`}>{`${blog.title} ${blog.author}`}</Link>
+        </div>
+      ))}
     </div>
   )
 }
