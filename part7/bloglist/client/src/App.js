@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react'
-import { Routes, Route, useMatch, Link } from 'react-router-dom'
+import { Routes, Route, useMatch } from 'react-router-dom'
 import blogService from './services/blogs'
 import Notification from './components/Notification'
-import Button from './components/Button'
 import { useDispatch, useSelector } from 'react-redux'
 import LoginForm from './components/LoginForm'
 import { setUser } from './reducers/userReducer'
@@ -12,6 +11,7 @@ import { initalizeUsers } from './reducers/usersReducer'
 import Users from './components/Users'
 import User from './components/User'
 import Blog from './components/Blog'
+import Navbar from './components/Navbar'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -36,11 +36,6 @@ const App = () => {
     }
   }, [])
 
-  const handleLogout = () => {
-    window.localStorage.removeItem('loggedUser')
-    dispatch(setUser(null))
-  }
-
   const userMatch = useMatch('/users/:id')
   const user = userMatch
     ? users.find((user) => user.id === userMatch.params.id)
@@ -54,7 +49,7 @@ const App = () => {
   if (!currentUser) {
     return (
       <div>
-        <h2>Blogs</h2>
+        <Navbar />
         <Notification />
         <LoginForm />
       </div>
@@ -63,23 +58,8 @@ const App = () => {
 
   return (
     <div>
-      <h2>Blogs</h2>
+      <Navbar />
       <Notification />
-
-      <div style={{ backgroundColor: 'lightgrey' }}>
-        <Link style={{ paddingRight: 5 }} to="/">
-          blogs
-        </Link>
-        <Link style={{ paddingRight: 5 }} to="/users">
-          users
-        </Link>
-        <span style={{ paddingRight: 5 }}>{currentUser.name} logged in</span>
-        <Button
-          style={{ paddingRight: 5 }}
-          action={handleLogout}
-          text="logout"
-        />
-      </div>
 
       <Routes>
         <Route path="/users/:id" element={<User user={user} />} />
