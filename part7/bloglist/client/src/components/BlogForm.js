@@ -23,7 +23,7 @@ const BlogForm = ({ createBlog }) => {
     createBlog({
       title: newTitle,
       author: newAuthor,
-      url: newUrl
+      url: newUrl,
     })
 
     setNewTitle('')
@@ -33,27 +33,44 @@ const BlogForm = ({ createBlog }) => {
 
   return (
     <div>
-      <h2>Create new</h2>
+      <div className="text-xl font-bold">Create new</div>
       <form onSubmit={addBlog}>
-        <div>title: <input
-          id='title'
-          value={newTitle}
-          onChange={handleTitleChange}
-        />
+        <div>
+          <div>Title</div>
+          <input
+            className="border rounded pl-2"
+            id="title"
+            value={newTitle}
+            onChange={handleTitleChange}
+            placeholder="title"
+          />
         </div>
-        <div>author: <input
-          id='author'
-          value={newAuthor}
-          onChange={handleAuthorChange}
-        />
+        <div>
+          <div>Author</div>
+          <input
+            className="border rounded pl-2"
+            id="author"
+            value={newAuthor}
+            onChange={handleAuthorChange}
+            placeholder="author"
+          />
         </div>
-        <div>url: <input
-          id='url'
-          value={newUrl}
-          onChange={handleUrlChange}
-        />
+        <div>
+          <div>Url</div>
+          <input
+            className="border rounded pl-2"
+            id="url"
+            value={newUrl}
+            onChange={handleUrlChange}
+            placeholder="url"
+          />
         </div>
-        <button type="submit">create</button>
+        <button
+          className="bg-green-400  w-16 py-1 px-1 rounded m-1 ml-0 font-medium hover:bg-green-500"
+          type="submit"
+        >
+          Create
+        </button>
       </form>
     </div>
   )

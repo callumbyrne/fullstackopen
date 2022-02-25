@@ -15,18 +15,18 @@ const Navbar = () => {
 
   return (
     <nav className="bg-gray-100">
-      <div className="max-w-6xl mx-auto px-4">
+      <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between">
           <div className="flex space-x-4">
             {/* logo */}
             <div>
               <a
                 href="#"
-                className="flex items-center py-5 px-2 text-gray-700 hover:text-gray-900"
+                className="flex items-center py-5 px-2 text-3xl text-gray-700 hover:text-gray-900"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
+                  className="h-7 w-7"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -42,29 +42,29 @@ const Navbar = () => {
               </a>
             </div>
             {/* primary nav */}
-            <div className="hidden md:flex items-center space-x-1">
+            <div className="hidden md:flex items-center space-x-1 text-xl">
               <Link
                 className="py-5 px-3 text-gray-600 hover:text-gray-900"
                 to="/"
               >
-                blogs
+                Blogs
               </Link>
               <Link
                 className="py-5 px-3 text-gray-600 hover:text-gray-900"
                 to="/users"
               >
-                users
+                Users
               </Link>
             </div>
           </div>
           {/* secondary nav */}
           {currentUser ? (
-            <div className="hidden md:flex items-center space-x-1">
+            <div className="hidden md:flex items-center space-x-1 text-xl">
               <span className="py-5 px-3">{currentUser.name} logged in</span>
               <Button
-                className="py-1 px-3 bg-yellow-300 hover:bg-yellow-400 rounded transition duration-200"
+                className="py-2 px-4 font-medium bg-yellow-300 hover:bg-yellow-400 rounded transition duration-200"
                 action={handleLogout}
-                text="logout"
+                text="Logout"
               />
             </div>
           ) : null}

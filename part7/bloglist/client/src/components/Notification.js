@@ -7,15 +7,18 @@ const Notification = () => {
     return null
   }
 
-  const style = {
-    borderStyle: 'solid',
-    borderRadius: 5,
-    padding: 10,
-    color: notification.type === 'success' ? 'green' : 'red',
-    background: 'lightgrey',
-  }
+  const colorStyle =
+    notification.type === 'success'
+      ? 'bg-green-100 text-green-600'
+      : 'bg-red-100 text-red-600'
 
-  return <div style={style}>{notification.message}</div>
+  return (
+    <div className={`${colorStyle}`}>
+      <div className="max-w-7xl mx-auto py-5 px-4 font-medium text-lg">
+        {notification.message}
+      </div>
+    </div>
+  )
 }
 
 export default Notification

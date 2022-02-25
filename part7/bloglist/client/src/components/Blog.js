@@ -21,7 +21,7 @@ const Blog = ({ blog }) => {
     }
   }, [user, blog])
 
-  const showWhenOP = { display: OP ? '' : 'none' }
+  const showWhenOP = OP ? '' : 'hidden'
 
   const likeHandler = () => {
     const blogObject = {
@@ -52,28 +52,52 @@ const Blog = ({ blog }) => {
 
   return (
     <div>
-      <h2>{`${blog.title} ${blog.author}`}</h2>
-      <div>{blog.url}</div>
-      <div>
-        likes <span className="likes">{blog.likes}</span>
-        <button onClick={likeHandler} className="likeButton">
-          like
+      {/* blog */}
+      <div className="pb-5 space-y-3">
+        <div className="font-bold text-3xl">{`${blog.title} ${blog.author}`}</div>
+        <div>{blog.url}</div>
+        <div>
+          Likes <span className="likes">{blog.likes}</span>
+          <button
+            className="bg-yellow-400 w-16 py-1 px-1 rounded m-1 ml-5 font-medium hover:bg-yellow-500"
+            onClick={likeHandler}
+          >
+            Like
+          </button>
+        </div>
+        <div>Added by {blog.user.name}</div>
+        <button
+          className={`${showWhenOP} bg-red-400 w-16 py-1 px-1 rounded m-1 ml-0 font-medium hover:bg-red-500`}
+          onClick={deleteHandler}
+        >
+          Delete
         </button>
       </div>
-      <div>added by {blog.user.name}</div>
-      <button style={showWhenOP} onClick={deleteHandler}>
-        remove
-      </button>
-      <h3>comments</h3>
-      <form onSubmit={submitComment}>
-        <input value={newComment} onChange={handleCommentChange} />
-        <button type="submit">add comment</button>
-      </form>
-      <ul>
-        {blog.comments.map((comment, index) => (
-          <li key={index}>{comment}</li>
-        ))}
-      </ul>
+
+      {/* comments */}
+      <div>
+        <div className="font-bold text-xl">Comments</div>
+        <form onSubmit={submitComment}>
+          <input
+            className="border rounded pl-2 mr-4"
+            value={newComment}
+            onChange={handleCommentChange}
+          />
+          <button
+            className="bg-green-400 py-1 px-2 rounded m-1 ml-0 font-medium hover:bg-green-500"
+            type="submit"
+          >
+            Submit
+          </button>
+        </form>
+        <ul>
+          {blog.comments.map((comment, index) => (
+            <li className="list-disc ml-8" key={index}>
+              {comment}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   )
 }

@@ -19,23 +19,21 @@ const BlogList = () => {
 
   const blogFormRef = useRef()
 
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5,
-  }
-
   return (
     <div>
-      <Togglable buttonLabel="new blog" ref={blogFormRef}>
+      <Togglable buttonLabel="New blog" ref={blogFormRef}>
         <BlogForm createBlog={addBlog} />
       </Togglable>
 
       {orderedBlogs.map((blog) => (
-        <div key={blog.id} style={blogStyle}>
-          <Link to={`/blogs/${blog.id}`}>{`${blog.title} ${blog.author}`}</Link>
+        <div
+          key={blog.id}
+          className="pt-4 pl-2 my-2 border-solid border rounded"
+        >
+          <Link
+            className="text-gray-600 hover:text-black"
+            to={`/blogs/${blog.id}`}
+          >{`${blog.title} ${blog.author}`}</Link>
         </div>
       ))}
     </div>

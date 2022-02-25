@@ -51,7 +51,9 @@ const App = () => {
       <div>
         <Navbar />
         <Notification />
-        <LoginForm />
+        <div className="max-w-7xl mx-auto p-4">
+          <LoginForm />
+        </div>
       </div>
     )
   }
@@ -60,13 +62,14 @@ const App = () => {
     <div>
       <Navbar />
       <Notification />
-
-      <Routes>
-        <Route path="/users/:id" element={<User user={user} />} />
-        <Route path="/users" element={<Users />} />
-        <Route path="/blogs/:id" element={<Blog blog={blog} />} />
-        <Route path="/" element={<BlogList />} />
-      </Routes>
+      <div className="max-w-7xl mx-auto p-4">
+        <Routes>
+          <Route path="/users/:id" element={<User user={user} />} />
+          <Route path="/users" element={<Users />} />
+          <Route path="/blogs/:id" element={<Blog blog={blog} />} />
+          <Route path="/" element={<BlogList />} />
+        </Routes>
+      </div>
     </div>
   )
 }
