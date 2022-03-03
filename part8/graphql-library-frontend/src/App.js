@@ -1,26 +1,39 @@
-import { useState } from "react";
-import Authors from "./components/Authors";
-import Books from "./components/Books";
-import NewBook from "./components/NewBook";
+import { useState } from 'react'
+import Authors from './components/Authors'
+import Books from './components/Books'
+import NewBook from './components/NewBook'
+import EditAuthor from './components/EditAuthor'
+import Notify from './components/Notify'
 
 const App = () => {
-    const [page, setPage] = useState("authors");
+  const [page, setPage] = useState('authors')
+  const [errorMessage, setErrorMessage] = useState(null)
 
-    return (
-        <div>
-            <div>
-                <button onClick={() => setPage("authors")}>authors</button>
-                <button onClick={() => setPage("books")}>books</button>
-                <button onClick={() => setPage("add")}>add book</button>
-            </div>
+  const notify = (message) => {
+    setErrorMessage(message)
+    setTimeout(() => {
+      setErrorMessage(null)
+    }, 5000)
+  }
 
-            <Authors show={page === "authors"} />
+  return (
+    <div>
+      <Notify errorMessage={errorMessage} />
 
-            <Books show={page === "books"} />
+      <div>
+        <button onClick={() => setPage('authors')}>authors</button>
+        <button onClick={() => setPage('books')}>books</button>
+        <button onClick={() => setPage('add')}>add book</button>
+      </div>
 
-            <NewBook show={page === "add"} />
-        </div>
-    );
-};
+      <Authors show={page === 'authors'} />
+      <EditAuthor show={page === 'authors'} setError={notify} />
 
-export default App;
+      <Books show={page === 'books'} />
+
+      <NewBook show={page === 'add'} />
+    </div>
+  )
+}
+
+export default App
