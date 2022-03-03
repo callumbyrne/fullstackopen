@@ -1,20 +1,22 @@
 import { useEffect, useState } from 'react'
-import { useMutation } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
+import Select from 'react-select'
 
-import { EDIT_AUTHOR } from '../queries'
+import { ALL_AUTHORS, EDIT_AUTHOR } from '../queries'
 
 const EditAuthor = ({ setError }) => {
-  const [name, setName] = useState('')
   const [born, setBorn] = useState('')
+  const [selectedOption, setSelectedOption] = useState(null)
 
   const [editAuthor, result] = useMutation(EDIT_AUTHOR)
+
+  const authors = useQuery(ALL_AUTHORS)
 
   const submit = (e) => {
     e.preventDefault()
 
-    editAuthor({ variables: { name, born } })
+    editAuthor({ variables: { name: selectedOption.value, born } })
 
-    setName('')
     setBorn('')
   }
 
@@ -25,18 +27,25 @@ const EditAuthor = ({ setError }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result.data])
 
+  if (authors.loading) {
+    return <div>loading...</div>
+  }
+
+  const options = authors.data.allAuthors.map((a) => ({
+    value: a.name,
+    label: a.name,
+  }))
+
   return (
     <div>
       <h2>Set birthyear</h2>
 
       <form onSubmit={submit}>
-        <div>
-          name
-          <input
-            value={name}
-            onChange={({ target }) => setName(target.value)}
-          />
-        </div>
+        <Select
+          options={options}
+          defaultValue={selectedOption}
+          onChange={setSelectedOption}
+        />
         <div>
           born
           <input
