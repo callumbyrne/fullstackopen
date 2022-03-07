@@ -61,17 +61,17 @@ const resolvers = {
     authorCount: () => Author.collection.countDocuments,
     allAuthors: async () => await Author.find({}),
     allBooks: async (root, arg) => {
-      const books = await Book.find({})
+      const books = await Book.find({}).populate('author')
 
       if (arg.author && arg.genre) {
         return books.filter(
           (book) =>
-            book.author === arg.author && book.genres.includes(arg.genre),
+            book.author.name === arg.author && book.genres.includes(arg.genre),
         )
       }
 
       if (arg.author) {
-        return books.filter((book) => book.author === arg.author)
+        return books.filter((book) => book.author.name === arg.author)
       }
 
       if (arg.genre) {
@@ -83,8 +83,11 @@ const resolvers = {
   },
 
   Author: {
-    bookCount: (root) =>
-      books.filter((book) => book.author === root.name).length,
+    bookCount: async (root) => {
+      const foundAuthor = await Author.findOne({ name: root.name })
+      const foundBooks = await Book.find({ author: foundAuthor.id })
+      return foundBooks.length
+    },
   },
 
   // In GraphQL, all operations which cause a change are done with mutations.
@@ -114,15 +117,22 @@ const resolvers = {
       }
       return book
     },
-    editAuthor: (root, args) => {
-      const author = authors.find((a) => a.name === args.name)
+    editAuthor: async (root, args) => {
+      const author = Author.findOne({ name: args.name })
       if (!author) {
         return null
       }
 
-      const updatedAuthor = { ...author, born: args.setBornTo }
-      authors = authors.map((a) => (a.name === args.name ? updatedAuthor : a))
-      return updatedAuthor
+      author = { ...author, born: args.setBornTo }
+      try {
+        await author.save()
+      } catch (error) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args,
+        })
+      }
+
+      return author
     },
   },
 }
