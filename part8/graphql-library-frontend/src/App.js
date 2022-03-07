@@ -8,6 +8,7 @@ import Notify from './components/Notify'
 const App = () => {
   const [page, setPage] = useState('authors')
   const [errorMessage, setErrorMessage] = useState(null)
+  // const [token, setToken] = useState(null)
 
   const notify = (message) => {
     setErrorMessage(message)
