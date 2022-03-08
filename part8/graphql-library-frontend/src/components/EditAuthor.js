@@ -4,7 +4,7 @@ import Select from 'react-select'
 
 import { ALL_AUTHORS, EDIT_AUTHOR } from '../queries'
 
-const EditAuthor = ({ setError }) => {
+const EditAuthor = ({ setError, show }) => {
   const [born, setBorn] = useState('')
   const [selectedOption, setSelectedOption] = useState(null)
 
@@ -35,6 +35,10 @@ const EditAuthor = ({ setError }) => {
     value: a.name,
     label: a.name,
   }))
+
+  if (!show) {
+    return null
+  }
 
   return (
     <div>
