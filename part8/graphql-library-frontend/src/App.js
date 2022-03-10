@@ -6,13 +6,25 @@ import EditAuthor from './components/EditAuthor'
 import Notify from './components/Notify'
 import LoginForm from './components/LoginForm'
 import Recommendations from './components/Recommendations'
-import { useApolloClient } from '@apollo/client'
+import {
+  useApolloClient,
+  useQuery,
+  useMutation,
+  useSubscription,
+} from '@apollo/client'
+import { BOOK_ADDED } from './queries'
 
 const App = () => {
   const [page, setPage] = useState('authors')
   const [errorMessage, setErrorMessage] = useState(null)
   const [token, setToken] = useState(null)
   const client = useApolloClient()
+
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      console.log(subscriptionData)
+    },
+  })
 
   const notify = (message) => {
     setErrorMessage(message)
