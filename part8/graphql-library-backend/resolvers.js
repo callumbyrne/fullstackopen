@@ -11,7 +11,23 @@ const resolvers = {
   Query: {
     bookCount: () => Book.collection.countDocuments,
     authorCount: () => Author.collection.countDocuments,
-    allAuthors: async () => await Author.find({}),
+    allAuthors: async () => {
+      const authors = await Author.find({})
+
+      const updatedAuthors = authors.map((author) => {
+        if (!author.books) {
+          return author
+        } else {
+          return {
+            name: author.name,
+            id: author.id,
+            born: author.born,
+            bookCount: author.books.length,
+          }
+        }
+      })
+      return updatedAuthors
+    },
     allBooks: async (root, arg) => {
       const books = await Book.find({}).populate('author')
 
@@ -37,13 +53,13 @@ const resolvers = {
     },
   },
 
-  Author: {
-    bookCount: async (root) => {
-      const foundAuthor = await Author.findOne({ name: root.name })
-      const foundBooks = await Book.find({ author: foundAuthor.id })
-      return foundBooks.length
-    },
-  },
+  // Author: {
+  //   bookCount: async (root) => {
+  //     const foundAuthor = await Author.findOne({ name: root.name })
+  //     const foundBooks = await Book.find({ author: foundAuthor.id })
+  //     return foundBooks.length
+  //   },
+  // },
 
   // In GraphQL, all operations which cause a change are done with mutations.
   Mutation: {
@@ -56,7 +72,9 @@ const resolvers = {
       }
 
       if (!foundAuthor) {
-        const author = new Author({ name: args.author })
+        const author = new Author({
+          name: args.author,
+        })
         try {
           await author.save()
         } catch (error) {
@@ -66,10 +84,15 @@ const resolvers = {
         }
       }
 
-      const author = await Author.findOne({ name: args.author })
+      let author = await Author.findOne({ name: args.author })
       const book = new Book({ ...args, author })
       try {
         await book.save()
+        const bookCount = await Book.find({
+          author: author.id,
+        }).countDocuments()
+        author.bookCount = bookCount
+        author.save()
       } catch (error) {
         throw new UserInputError(error.message, {
           invalidArgs: args,
@@ -87,14 +110,15 @@ const resolvers = {
         throw new AuthenticationError('not authenticated')
       }
 
-      const author = Author.findOne({ name: args.name })
-      if (!author) {
-        return null
-      }
+      let author = await Author.findOne({ name: args.name })
 
-      author = { ...author, born: args.setBornTo }
+      if (!author) return null
+
+      author.born = args.setBornTo
+      console.log(author)
+
       try {
-        await author.save()
+        author.save()
       } catch (error) {
         throw new UserInputError(error.message, {
           invalidArgs: args,
