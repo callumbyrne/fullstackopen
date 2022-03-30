@@ -27,7 +27,10 @@ interface Result {
     average: number;
 }
 
-const calculateExercises = (array: Array<number>, target: number): Result => {
+export const calculateExercises = (
+    array: Array<number>,
+    target: number
+): Result => {
     const numberOfDays = array.length;
     const numberOfTrainingDays = array.filter((a) => a !== 0).length;
     const targetValue = target;
