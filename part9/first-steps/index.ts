@@ -33,18 +33,20 @@ app.get("/bmi", (req, res) => {
 });
 
 app.post("/exercises", (req, res) => {
-    console.log(req.body);
-    const exercisesArray = req.body.daily_exercises;
-    const target = req.body.target;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const { daily_exercises, target } = req.body;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const exercisesArray: number[] = daily_exercises;
 
     if (!exercisesArray || !target) {
         res.status(400).send({
             error: "Missing parameter daily exercises or target",
         });
-    } else if (exercisesArray.some(isNaN) || isNaN(target)) {
+    } else if (exercisesArray.some(isNaN) || isNaN(Number(target))) {
         res.status(400).send({ error: "malformatted parameters" });
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const result = calculateExercises(exercisesArray, target);
     res.send(result);
 });
